@@ -3,6 +3,8 @@ Dies ist das Basisprojekt für die Lernenden.
 
 ## Struktur
 
+MW
+
 Die Grundstruktur ist wie folgt aufgebaut:
 
 - [01_Einführungsprojekte](01_Einführungsprojekte)
