@@ -3,7 +3,11 @@ Dies ist das Basisprojekt für die Lernenden.
 
 ## Struktur
 
+MW
+
 Die Grundstruktur ist wie folgt aufgebaut:
+
+mw
 
 - [01_Einführungsprojekte](01_Einführungsprojekte)
   - *Projekte für die Einführung in die Programmiersprachen*
