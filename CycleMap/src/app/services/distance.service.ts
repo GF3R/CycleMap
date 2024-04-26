@@ -68,7 +68,6 @@ export class DistanceService {
         };
 
         var distance = 0;
-
         axios.post(apiUrl, requestData)
           .then(response => {
           distance = response.data.data.currentCampaign.participatingCompanies[0].stats.distance;
