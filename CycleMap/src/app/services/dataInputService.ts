@@ -8,8 +8,15 @@ import axios from "axios";
 @Injectable({providedIn: 'root'})
 export class DataInputService {
   
-    private kilometerSubject = new BehaviorSubject(5275.917396937822);
-    public meters$ = this.kilometerSubject.asObservable().pipe(map(value => value * 1000));
+  // 5275.917396937822 distanz addis
+    private distanceInKM = 5275917.396937822;
+    private distanceInWeirdFormat = 16678977.626334907;
+    private correction = (this.distanceInWeirdFormat / this.distanceInKM);
+
+
+    //
+    private kilometerSubject = new BehaviorSubject(500);
+    public meters$ = this.kilometerSubject.asObservable().pipe(map(value => value * 1000 * this.correction  ));
 
     constructor(
       private client: HttpClient,
