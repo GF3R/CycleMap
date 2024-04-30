@@ -11,26 +11,28 @@ import { Vector } from 'ol/source';
 import { Point } from 'ol/geom';
 import { Injectable } from "@angular/core";
 import { Feature, Observable } from 'ol';
-import { tap } from "rxjs";
+import { BehaviorSubject,tap } from "rxjs";
 
 
 
 
 @Injectable({providedIn: 'root'})
 export class FeaturesService{
-  public featuresList: Feature[] = [];
+
+  private featureListBehaviorSubject: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>(this.featuresList);
+  public featureList$ = this.featureListBehaviorSubject.asObservable();
   
   constructor(
     private coordsManagementService: CoordsManagementService, 
     private dataInputService: DataInputService
   ) {
-    this.features();
+    this.initializeFeatureList();
   }
 
-  getfeatureList(): Observable<Feature[]> {
+  initializeFeatureList(){
     this.dataInputService.meters$.pipe(
-      tap(m => console.log('DistanceService output:', m)),
-      tap(m => {
+      tap((m: any) => console.log('DistanceService output:', m)),
+      tap((m: number) => {
         // Get coordinates from CoordsManagementService
         let cordThun = this.coordsManagementService.getThunCoords();
         let cordAddis = this.coordsManagementService.getAddisCoords();
@@ -131,13 +133,8 @@ export class FeaturesService{
         }));
 
 
-    
-      this.featuresList = [lineFeature, lineFeatureAC, featureFlags, featureJonas, featureLogo, featureStart];
-      return this.featuresList;    })
-    
-  );
-
-}
-
+        this.featureListBehaviorSubject.next([lineFeature, lineFeatureAC, featureFlags, featureJonas, featureLogo, featureStart]);
+      ));
+  }
 
 }
