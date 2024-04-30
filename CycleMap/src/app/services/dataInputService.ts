@@ -7,13 +7,22 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DataInputService {
-  // 5275.917396937822 distanz addis
   private distanceInKM = 5275917.396937822;
   private distanceInWeirdFormat = 16678977.626334907;
   private correction = this.distanceInWeirdFormat / this.distanceInKM;
+  private firstStageInMetersCorrected = 5275.917396937822*1000*this.correction;
+
+
+  getCorrection(){
+    return this.correction;
+  };
+
+  getFirstStage(){
+    return this.firstStageInMetersCorrected;
+  };
 
   //
-  private kilometerSubject = new BehaviorSubject(500);
+  private kilometerSubject = new BehaviorSubject(0);
   public meters$: Observable<number> = this.kilometerSubject
     .asObservable()
     .pipe(map((value: number) => value * 1000 * this.correction));
@@ -21,6 +30,7 @@ export class DataInputService {
   constructor(private client: HttpClient) {}
 
   public refreshDistance() {
+    this.kilometerSubject.next(5275.5);
     // this.client.get("https://simplescraper.io/api/NZ3QALh5rnYDnI7DWbaY?apikey=MkwEFueoBCVpojXO9LupMkAIuklAJNjo&run_now=true").subscribe(
     //     response => {
     //         var mData = (response as any).data[0];

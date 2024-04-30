@@ -9,7 +9,7 @@ import { DataInputService } from './services/dataInputService';
 import { CoordsManagementService } from './services/coordsManagementService';
 import { FeaturesService } from './services/featureService';
 import { HttpClient } from '@angular/common/http';
-import { filter, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { transform } from 'ol/proj';
 import { Vector as VectorSource } from 'ol/source';
 import { Coordinate } from 'ol/coordinate';
@@ -36,19 +36,44 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.dataInputService.refreshDistance();
+    
+    this.featuresService.featureList$.pipe(tap((featureList: Feature[]) => {
+      var vectorLayer = new VectorLayer({
+        source: new VectorSource({
+          features: featureList,
+        }),
+      });
+      console.log(featureList);
+      console.log(this.map);
+      console.log(featureList);
+      this.map?.addLayer(vectorLayer);
+    })).subscribe();
+
+  
     this.coordsManagementService.getNormalizedTA();
 
     let cordThun = this.coordsManagementService.getThunCoords();
+    let cordAddis = this.coordsManagementService.getAddisCoords();
     let cordCapeTown = this.coordsManagementService.getCapeTownCoords();
     let normalizedTA = this.coordsManagementService.getNormalizedTA();
     let normalizedAC = this.coordsManagementService.getNormalizedAC();
+    let point2Coords = [0,0];
+    let point3Coords = [0,0];
 
     this.dataInputService.meters$.subscribe((m) => {
-      let point2Coords = [
-        cordThun[0] + m * normalizedTA[0],
-        cordThun[1] + m * normalizedTA[1],
-      ];
+    //   if(m<= this.dataInputService.getFirstStage()){
+    //   let point2Coords = [
+    //     cordThun[0] + m * normalizedTA[0],
+    //     cordThun[1] + m * normalizedTA[1],
+    //   ];
+    // } else if (m> this.dataInputService.getFirstStage() && m<30000){
+    //   point2Coords = cordAddis;
+    //   let point3Coords = [
+    //     cordAddis[0] + m * normalizedAC[0],
+    //     cordAddis[1] + m * normalizedAC[1],
+    //   ];
+
+    // }
 
       console.log('m is');
       console.log(m);
@@ -68,44 +93,34 @@ export class AppComponent implements OnInit {
       });
 
       //Zoombereich = Punkt A -> Punkt B
-      if (m <= 5275.9 * 1000) {
+      if (m <= this.dataInputService.getFirstStage()) {
         this.map
           ?.getView()
           .fit(
             [
-              Math.min(cordThun[0], point2Coords[0]),
-              Math.min(cordThun[1], point2Coords[1]),
-              Math.max(cordThun[0], point2Coords[0]),
-              Math.max(cordThun[1], point2Coords[1]),
+              Math.min(cordThun[0], point2Coords[0]-1000),
+              Math.min(cordThun[1], point2Coords[1]-1000),
+              Math.max(cordThun[0], point2Coords[0]+1000),
+              Math.max(cordThun[1], point2Coords[1]+1000),
             ],
             { size: this.map.getSize(), padding: [200, 200, 200, 200] }
           );
-      } else {
+      } else if (m> this.dataInputService.getFirstStage()) {
         this.map
           ?.getView()
           .fit(
             [
-              Math.min(point2Coords[0], cordCapeTown[0]),
-              Math.min(point2Coords[1], cordCapeTown[1]),
-              Math.max(point2Coords[0], cordCapeTown[0]),
-              Math.min(point2Coords[1], cordCapeTown[1]),
+              Math.min(cordAddis[0], point3Coords[0]-1000),
+              Math.min(cordAddis[1], point3Coords[1]-1000),
+              Math.max(cordAddis[0], point3Coords[0]+1000),
+              Math.min(cordAddis[1], point3Coords[1]+1000),
             ],
             { size: this.map.getSize(), padding: [200, 200, 200, 200] }
           );
       }
 
-      this.featuresService.featureList$.subscribe((featureList: Feature[]) => {
-        var vectorLayer = new VectorLayer({
-          source: new VectorSource({
-            features: featureList,
-          }),
-        });
-        console.log(featureList);
-        console.log(this.map);
-        console.log(featureList);
-        this.map?.addLayer(vectorLayer);
-      });
     });
+    this.dataInputService.refreshDistance();
 
     // Ausgabe der Koordinaten
     // this.map.on('singleclick', function (evt: { coordinate: Coordinate; }) {
