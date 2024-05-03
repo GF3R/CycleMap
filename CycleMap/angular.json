@@ -20,7 +20,13 @@
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.css", "node_modules/ol/ol.css"],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "lerc",
+              "rbush",
+              "xml-utils/get-attribute.js",
+              "xml-utils/find-tags-by-name.js"
+            ]
           },
           "configurations": {
             "production": {
