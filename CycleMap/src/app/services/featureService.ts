@@ -119,6 +119,7 @@ export class FeaturesService {
             point2Coords = [cordAddis[0], cordAddis[1]]
           }
 
+
           
           let lineString = new LineString([cordThun, point2Coords]);
 
@@ -137,12 +138,45 @@ export class FeaturesService {
             })
           );
 
+          let lineStringDotTA = new LineString([cordThun, cordAddis]);
+
+          let lineFeatureDotTA = new Feature({
+            geometry: lineStringDotTA,
+          });
+          lineFeatureDotTA.setStyle(
+            new Style({
+              stroke: new Stroke({
+                color: '#010100',
+                width: 4,
+                lineDash: [4,16]
+              })
+            })
+          )
+
+          let lineStringDotAC = new LineString([cordAddis, cordCapeTown]);
+
+          let lineFeatureDotAC = new Feature({
+            geometry: lineStringDotAC,
+          });
+          lineFeatureDotAC.setStyle(
+            new Style({
+              stroke: new Stroke({
+                color: '#010100',
+                width: 4,
+                lineDash: [4,16]
+              })
+            })
+          )
+          
+
           let allFeatures = [
             lineFeature,
             feature2,
             featureFlags,
             featureJonas,
             featureLogo,
+            lineFeatureDotTA,
+            lineFeatureDotAC,
           ];
 
           if (m > this.dataInputService.getFirstStage()) {
