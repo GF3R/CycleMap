@@ -1,159 +1,178 @@
-import { CoordsManagementService } from "./coordsManagementService";
-import { DataInputService } from "./dataInputService";
-import {Vector as VectorSource} from 'ol/source';
+import { CoordsManagementService } from './coordsManagementService';
+import { DataInputService } from './dataInputService';
+import { Vector as VectorSource } from 'ol/source';
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
-import {getDistance} from 'ol/sphere';
+import { getDistance } from 'ol/sphere';
 import Stroke from 'ol/style/Stroke';
 import { Coordinate } from 'ol/coordinate';
-import {LineString} from 'ol/geom';
+import { LineString } from 'ol/geom';
 import { Vector } from 'ol/source';
 import { Point } from 'ol/geom';
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { Feature, Observable } from 'ol';
-import { BehaviorSubject,tap } from "rxjs";
+import { BehaviorSubject, tap } from 'rxjs';
+import { extend } from 'ol/extent';
 
-
-
-
-@Injectable({providedIn: 'root'})
-export class FeaturesService{
-
-  private featureListBehaviorSubject: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>([]);
+@Injectable({ providedIn: 'root' })
+export class FeaturesService {
+  private featureListBehaviorSubject: BehaviorSubject<Feature[]> =
+    new BehaviorSubject<Feature[]>([]);
   public featureList$ = this.featureListBehaviorSubject.asObservable();
-  
+
+  public extentOfLineString: number[] = [0, 0, 0, 0];
+
   constructor(
-    private coordsManagementService: CoordsManagementService, 
+    private coordsManagementService: CoordsManagementService,
     private dataInputService: DataInputService
   ) {
     this.initializeFeatureList();
   }
 
-  initializeFeatureList(){
-    this.dataInputService.meters$.pipe(
-    //
-      tap((m: number) => {
-        // Get coordinates from CoordsManagementService
-        let cordThun = this.coordsManagementService.getThunCoords();
-        let cordAddis = this.coordsManagementService.getAddisCoords();
-        let cordCapeTown = this.coordsManagementService.getCapeTownCoords();
-        let normalizedTA = this.coordsManagementService.getNormalizedTA();
-        let normalizedAC = this.coordsManagementService.getNormalizedAC();
+  initializeFeatureList() {
+    this.dataInputService.meters$
+      .pipe(
+        //
+        tap((m: number) => {
+          // Get coordinates from CoordsManagementService
+          let cordThun = this.coordsManagementService.getThunCoords();
+          let cordAddis = this.coordsManagementService.getAddisCoords();
+          let cordCapeTown = this.coordsManagementService.getCapeTownCoords();
+          let normalizedTA = this.coordsManagementService.getNormalizedTA();
+          let normalizedAC = this.coordsManagementService.getNormalizedAC();
 
-      //1. Punkt in Thun mit Logo
-      let point = new Point(cordThun);
-      var featureLogo = new Feature({
-        geometry: point
-      });
+          //1. Punkt in Thun mit Logo
+          let point = new Point(cordThun);
+          var featureLogo = new Feature({
+            geometry: point,
+          });
 
-      let iconStyleNexplore = new Style({
-        image: new Icon({
-          anchor: [0.5, 46],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'pixels',
-          src: 'assets/images/Nexplore_N.gif',
-          scale: 0.2,
-        }),
-      });
-      featureLogo.setStyle(iconStyleNexplore)
+          let iconStyleNexplore = new Style({
+            image: new Icon({
+              anchor: [0.5, 46],
+              anchorXUnits: 'fraction',
+              anchorYUnits: 'pixels',
+              src: 'assets/images/Nexplore_N.gif',
+              scale: 0.2,
+            }),
+          });
+          featureLogo.setStyle(iconStyleNexplore);
 
-      //Point Jonas
-      let pointJonas = new Point(cordAddis)
-      var featureJonas = new Feature({
-        geometry : pointJonas
-      })
+          //Point Jonas
+          let pointJonas = new Point(cordAddis);
+          var featureJonas = new Feature({
+            geometry: pointJonas,
+          });
 
-      let iconStyleJonas = new Style({
-        image: new Icon({
-          anchor: [0.5, 46],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'pixels',
-          src: 'assets/images/Jonas.png',
-          scale: 0.2,
-        }),
-      });
-      featureJonas.setStyle(iconStyleJonas);
-      
+          let iconStyleJonas = new Style({
+            image: new Icon({
+              anchor: [0.5, 46],
+              anchorXUnits: 'fraction',
+              anchorYUnits: 'pixels',
+              src: 'assets/images/Jonas.png',
+              scale: 0.2,
+            }),
+          });
+          featureJonas.setStyle(iconStyleJonas);
 
-      //Point Flags
-      let pointFlags = new Point(cordCapeTown)
-      var featureFlags = new Feature({
-        geometry : pointFlags
-      })
+          //Point Flags
+          let pointFlags = new Point(cordCapeTown);
+          var featureFlags = new Feature({
+            geometry: pointFlags,
+          });
 
-      let iconStyleFlags = new Style({
-        image: new Icon({
-          anchor: [0.5, 46],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'pixels',
-          src: 'assets/images/flags.png',
-          scale: 0.09,
-        }),
-      });
-      featureFlags.setStyle(iconStyleFlags);
+          let iconStyleFlags = new Style({
+            image: new Icon({
+              anchor: [0.5, 46],
+              anchorXUnits: 'fraction',
+              anchorYUnits: 'pixels',
+              src: 'assets/images/flags.png',
+              scale: 0.09,
+            }),
+          });
+          featureFlags.setStyle(iconStyleFlags);
 
-      let point2Coords = [cordThun[0], cordThun[1]];
-      console.log("Value of m")
-      console.log(m)
-      console.log(this.dataInputService.getFirstStage())
+          let point2Coords = [cordThun[0], cordThun[1]];
+          console.log('Value of m');
+          console.log(m);
+          console.log(this.dataInputService.getFirstStage());
 
-      if(m<= this.dataInputService.getFirstStage()){
-      //Line Thun - Addis
-       point2Coords = [cordThun[0]+(m*normalizedTA[0]), cordThun[1]+(m*normalizedTA[1])];
-      }
+          if (m <= this.dataInputService.getFirstStage()) {
+            //Line Thun - Addis
+            point2Coords = [
+              cordThun[0] + m * normalizedTA[0],
+              cordThun[1] + m * normalizedTA[1],
+            ];
+          }
 
-      let point2 = new Point(point2Coords);
-      var feature2 = new Feature({
-        geometry: point2
-      });
+          let point2 = new Point(point2Coords);
+          var feature2 = new Feature({
+            geometry: point2,
+          });
 
-      //Punkt für 2.Linie
-      let point3Coords = [cordAddis[0], cordAddis[1]];
-      if (m> this.dataInputService.getFirstStage() && m<30000){
-        let point3Coords = [cordAddis[0]+((m-this.dataInputService.getFirstStage())*normalizedAC[0]), cordAddis[1]+(m-this.dataInputService.getFirstStage()*normalizedAC[1])];
-      }
+          var feature2 = new Feature({
+            geometry: point2,
+          });
 
+          //Punkt für 2.Linie
 
-      let point3 = new Point(point3Coords);
-      var feature2 = new Feature({
-        geometry: point2
-      });
+          let lineString = new LineString([cordThun, point2Coords]);
 
-      
-      console.log("distance to THun",getDistance(point2Coords, cordThun))
-      
+          let lineFeature = new Feature({
+            geometry: lineString,
+          });
 
-        console.log("point2Coords", point2Coords)
-        let lineString = new LineString([cordThun, point2Coords]);
+          let point3Coords = [cordAddis[0], cordAddis[1]];
+          this.extentOfLineString = lineString.getExtent();
+          lineFeature.setStyle(
+            new Style({
+              stroke: new Stroke({
+                color: '#010100',
+                width: 4,
+              }),
+            })
+          );
 
-        let lineFeature = new Feature({
-          geometry: lineString
-        });
+          let allFeatures = [
+            lineFeature,
+            feature2,
+            featureFlags,
+            featureJonas,
+            featureLogo,
+          ];
 
-        let lineStringAC = new LineString([cordAddis, point3Coords]);
+          if (m > this.dataInputService.getFirstStage() && m < 30000) {
+            point3Coords = [
+              cordAddis[0] +
+                (m - this.dataInputService.getFirstStage()) * normalizedAC[0],
+              cordAddis[1] +
+                (m - this.dataInputService.getFirstStage() * normalizedAC[1]),
+            ];
 
-        let lineFeatureAC = new Feature({
-          geometry: lineStringAC
-        });
+            let lineStringAC = new LineString([cordAddis, point3Coords]);
 
-        lineFeature.setStyle(new Style({
-          stroke: new Stroke({
-            color: '#010100',
-            width: 4
-          })
-        }));
+            let lineFeatureAC = new Feature({
+              geometry: lineStringAC,
+            });
 
-        lineFeatureAC.setStyle(new Style({
-          stroke: new Stroke({
-            color: '#010100',
-            width: 4
-          })
-        }));
+            lineFeatureAC.setStyle(
+              new Style({
+                stroke: new Stroke({
+                  color: '#010100',
+                  width: 4,
+                }),
+              })
+            );
+            this.extentOfLineString = extend(
+              this.extentOfLineString,
+              lineStringAC.getExtent()
+            );
+            allFeatures.push(lineFeatureAC);
+          }
 
-
-        this.featureListBehaviorSubject.next([lineFeature, feature2, lineFeatureAC, featureFlags, featureJonas, featureLogo]);
-  })).subscribe();
+          this.featureListBehaviorSubject.next(allFeatures);
+        })
+      )
+      .subscribe();
   }
-
-
 }
