@@ -36,7 +36,7 @@ export class DataInputService {
       .get('https://km-reader.azurewebsites.net/api/ReadFromGraph')
       .subscribe((data: any) => {
         console.log('got data', data);
-        this.kilometerSubject.next(data);
+      this.kilometerSubject.next(data);
       });
   }
 }

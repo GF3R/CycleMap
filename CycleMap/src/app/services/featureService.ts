@@ -97,13 +97,7 @@ export class FeaturesService {
           console.log(m);
           console.log(this.dataInputService.getFirstStage());
 
-          if (m <= this.dataInputService.getFirstStage()) {
-            //Line Thun - Addis
-            point2Coords = [
-              cordThun[0] + m * normalizedTA[0],
-              cordThun[1] + m * normalizedTA[1],
-            ];
-          }
+
 
           let point2 = new Point(point2Coords);
           var feature2 = new Feature({
@@ -114,8 +108,18 @@ export class FeaturesService {
             geometry: point2,
           });
 
-          //Punkt für 2.Linie
+          //Punkt für 2.Line
+          if (m <= this.dataInputService.getFirstStage()) {
+            //Line Thun - Addis
+            point2Coords = [
+              cordThun[0] + m * normalizedTA[0],
+              cordThun[1] + m * normalizedTA[1],
+            ];
+          } else {
+            point2Coords = [cordAddis[0], cordAddis[1]]
+          }
 
+          
           let lineString = new LineString([cordThun, point2Coords]);
 
           let lineFeature = new Feature({
@@ -141,12 +145,13 @@ export class FeaturesService {
             featureLogo,
           ];
 
-          if (m > this.dataInputService.getFirstStage() && m < 30000) {
+          if (m > this.dataInputService.getFirstStage()) {
+            point2Coords = [cordAddis[0], cordAddis[1]]
             point3Coords = [
               cordAddis[0] +
                 (m - this.dataInputService.getFirstStage()) * normalizedAC[0],
               cordAddis[1] +
-                (m - this.dataInputService.getFirstStage() * normalizedAC[1]),
+                (m - this.dataInputService.getFirstStage()) * normalizedAC[1],
             ];
 
             let lineStringAC = new LineString([cordAddis, point3Coords]);
