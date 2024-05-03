@@ -26,6 +26,7 @@ export class DataInputService {
   public meters$: Observable<number> = this.kilometerSubject
     .asObservable()
     .pipe(map((value: number) => value * 1000 * this.correction));
+    public kilometers$ = this.kilometerSubject.asObservable();
 
   constructor(private client: HttpClient) {}
 

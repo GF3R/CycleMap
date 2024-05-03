@@ -14,6 +14,7 @@ import { transform } from 'ol/proj';
 import { Vector as VectorSource } from 'ol/source';
 import { Coordinate } from 'ol/coordinate';
 import { Geometry } from 'ol/geom';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -26,10 +27,13 @@ import { Geometry } from 'ol/geom';
     FeaturesService,
     HttpClient,
   ],
+  imports:[AsyncPipe]
 })
 export class AppComponent implements OnInit {
   map?: Map;
   vectorLayer?: VectorLayer<VectorSource<Feature<Geometry>>>;
+
+  readonly kilometers$ = this.dataInputService.kilometers$;
 
   constructor(
     private dataInputService: DataInputService,
