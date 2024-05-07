@@ -49,7 +49,7 @@ export class FeaturesService {
 
           let iconStyleNexplore = new Style({
             image: new Icon({
-              anchor: [0.5, 46],
+              anchor: [0.5, 150],
               anchorXUnits: 'fraction',
               anchorYUnits: 'pixels',
               src: 'assets/images/Nexplore_N.gif',
@@ -108,6 +108,7 @@ export class FeaturesService {
             geometry: point2,
           });
 
+
           //Punkt für 2.Line
           if (m <= this.dataInputService.getFirstStage()) {
             //Line Thun - Addis
@@ -119,13 +120,35 @@ export class FeaturesService {
             point2Coords = [cordAddis[0], cordAddis[1]]
           }
 
-
-          
           let lineString = new LineString([cordThun, point2Coords]);
 
-          let lineFeature = new Feature({
-            geometry: lineString,
-          });
+            // Linien Feature
+            let lineFeature = new Feature({
+              geometry: lineString,
+            });
+  
+            let arrowStyle = new Style({
+              image: new Icon({
+                anchor: [0.5, 0.3],
+                rotateWithView: true,
+                rotation: -Math.PI *1.2, // Pfeil drehen
+                src: 'assets/images/arrow.png',
+                scale: 0.1,
+              }),
+              geometry: function (feature) {
+                let geometry = feature.getGeometry();
+                if (geometry instanceof LineString) {
+                  let coordinates = geometry.getCoordinates();
+                  return new Point(coordinates[coordinates.length - 1]);
+                }
+                return geometry;
+              },
+            });
+  
+            let arrowFeature = new Feature({
+              geometry: lineString,
+            });
+            arrowFeature.setStyle(arrowStyle);
 
           let point3Coords = [cordAddis[0], cordAddis[1]];
           this.extentOfLineString = lineString.getExtent();
@@ -148,7 +171,7 @@ export class FeaturesService {
               stroke: new Stroke({
                 color: '#010100',
                 width: 4,
-                lineDash: [4,16]
+                lineDash: [4,18]
               })
             })
           )
@@ -167,7 +190,7 @@ export class FeaturesService {
               })
             })
           )
-          
+
 
           let allFeatures = [
             lineFeature,
@@ -177,6 +200,7 @@ export class FeaturesService {
             featureLogo,
             lineFeatureDotTA,
             lineFeatureDotAC,
+            arrowFeature,
           ];
 
           if (m > this.dataInputService.getFirstStage()) {
