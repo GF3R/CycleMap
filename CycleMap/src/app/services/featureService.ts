@@ -150,7 +150,7 @@ export class FeaturesService {
             });
             arrowFeature.setStyle(arrowStyle);
 
-          let point3Coords = [cordAddis[0], cordAddis[1]];
+          let point3Coords = [cordCapeTown[0], cordCapeTown[1]];
           this.extentOfLineString = lineString.getExtent();
           lineFeature.setStyle(
             new Style({
