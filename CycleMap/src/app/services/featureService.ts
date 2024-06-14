@@ -131,7 +131,7 @@ export class FeaturesService {
               image: new Icon({
                 anchor: [0.5, 0.3],
                 rotateWithView: true,
-                rotation: -Math.PI *1.2, // Pfeil drehen
+                rotation: -Math.PI *2.5, // Pfeil drehen
                 src: 'assets/images/arrow.png',
                 scale: 0.1,
               }),
@@ -150,7 +150,7 @@ export class FeaturesService {
             });
             arrowFeature.setStyle(arrowStyle);
 
-          let point3Coords = [cordCapeTown[0], cordCapeTown[1]];
+          let point3Coords = [cordAddis[0], cordAddis[1]];
           this.extentOfLineString = lineString.getExtent();
           lineFeature.setStyle(
             new Style({
