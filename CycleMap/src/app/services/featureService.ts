@@ -120,7 +120,7 @@ export class FeaturesService {
             point2Coords = [cordAddis[0], cordAddis[1]]
           }
 
-          let lineString = new LineString([cordAddis, point3Coords]);
+          let lineString = new LineString([cordThun, point2Coords]);
 
             // Linien Feature
             let lineFeature = new Feature({
