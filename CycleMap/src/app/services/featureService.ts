@@ -120,7 +120,7 @@ export class FeaturesService {
             point2Coords = [cordAddis[0], cordAddis[1]]
           }
 
-          let lineString = new LineString([cordThun, point2Coords]);
+          let lineString = new LineString([cordAddis, point3Coords]);
 
             // Linien Feature
             let lineFeature = new Feature({
@@ -131,7 +131,7 @@ export class FeaturesService {
               image: new Icon({
                 anchor: [0.5, 0.3],
                 rotateWithView: true,
-                rotation: -Math.PI *2.5, // Pfeil drehen
+                rotation: -Math.PI *2.0, // Pfeil drehen
                 src: 'assets/images/arrow.png',
                 scale: 0.1,
               }),
